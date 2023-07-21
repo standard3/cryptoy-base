@@ -69,6 +69,19 @@ def test_affine_cipher() -> None:
         affine_cipher.decrypt(affine_cipher.encrypt(msg, key, 4321), key, 4321) == msg
     )
 
+    tp_key = 1114111
+    assert (
+        hashlib.sha256(
+            affine_cipher.decrypt_optimized(
+                "ґѦѦҲљѣѝѠҲѰѱџѭҲѱѠѭҲѰѭѦѣѤѫҲўѣҲѝџ", tp_key, 1234
+            ).encode()
+        ).hexdigest()
+        == "c46ec1b18ce8a878725a37e780dfb7351f68ed2e194c79fbc6aebee1a667975d"
+    )
+
+
+def test_affine_cipher_optimized() -> None:
+    key = 13
     assert affine_cipher.encrypt_optimized("Hello", key, 1234) == "ࡺ৳\u0a4e\u0a4eੵ"
     affine_keys = affine_cipher.compute_affine_keys(0x110000)
     key_inverse = affine_cipher.compute_affine_key_inverse(key, affine_keys, 0x110000)
@@ -80,7 +93,7 @@ def test_affine_cipher() -> None:
         )
         == "Hello"
     )
-
+    msg = "C@€s4r Ciph€r"
     assert (
         affine_cipher.decrypt_optimized(
             affine_cipher.encrypt_optimized(msg, 13, 4321), key_inverse, 4321
@@ -116,8 +129,14 @@ def test_attack_affine_cipher() -> None:
 
 def test_attack_affine_cipher_optimized() -> None:
     msg, key = affine_cipher.attack_optimized()
-    print(hashlib.sha512(msg.encode()).hexdigest())
-    print(hashlib.sha512(str(key).encode()).hexdigest())
+    assert (
+        hashlib.sha512(msg.encode()).hexdigest()
+        == "3b9923eeed436f0a269bc80289e6ddc4d5db70d0f2ccbf15d1827298d2cb914b84bdbeac9c0042b809ba67b63a74bb7c6a86895f6ab5fb541d50506bdce44dd7"
+    )
+    assert (
+        hashlib.sha512(str(key).encode()).hexdigest()
+        == "67f0ae7eff1e8c6f9a6c5495719936b5a50b4136460b9b95132ba16d21705ccea2ac686344e5c3860450453316d7728b02bf40c547496fe0e5bab481072505ec"
+    )
 
 
 def load_passwords_data() -> tuple[list[str], dict[str, str]]:
