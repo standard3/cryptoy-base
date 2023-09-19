@@ -132,3 +132,4 @@ def modular_inverse(a: int, n: int) -> int:
         t = t + n
 
     return t
+

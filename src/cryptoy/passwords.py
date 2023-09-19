@@ -30,9 +30,18 @@ def generate_users_and_password_hashes(
 def attack(passwords: list[str], passwords_database: dict[str, str]) -> dict[str, str]:
     users_and_passwords = {}
 
+    password_and_hash = {}
     # A implémenter
     # Doit calculer le mots de passe de chaque utilisateur grace à une attaque par dictionnaire
 
+    for password in passwords:
+        hash = hash_password(password)
+        password_and_hash[password] = hash
+    #print(password_and_hash)
+    for i, (user, hash1) in enumerate(passwords_database.items()):
+        for i, (password, hash2) in enumerate(password_and_hash.items()):
+            if hash1 == hash2:
+                users_and_passwords[user] = password
     return users_and_passwords
 
 
@@ -52,6 +61,11 @@ def fix(
     # }
     # tel que H = hash_password(S + password)
 
+    for i, (user, password) in enumerate(users_and_passwords.items()):
+        salt = random_salt()
+        users_and_salt = { "password_hash": hash_password(password + salt), "password_salt": salt }
+        new_database[user] = users_and_salt
+
     return new_database
 
 
@@ -59,4 +73,10 @@ def authenticate(
     user: str, password: str, new_database: dict[str, dict[str, str]]
 ) -> bool:
     # Doit renvoyer True si l'utilisateur a envoyé le bon password, False sinon
-    pass
+    arr = new_database[user]
+    pass_hash = hash_password(password + arr["password_salt"])
+    if arr["password_hash"] == pass_hash:
+        return True
+    else:
+        return False
+
