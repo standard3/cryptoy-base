@@ -7,17 +7,13 @@ from cryptoy.utils import (
 
 
 def encrypt(msg: str, shift: int) -> str:
-    # Implémenter le chiffrement de César
-    # Il faut utiliser la fonction str_to_unicodes, puis appliquer la formule
-    # (x + shift) % 0x110000 pour chaque unicode du tableau puis utiliser
-    # unicodes_to_str pour repasser en string
-    pass
+    """Encrypt a message using the Caesar cipher."""
+    return unicodes_to_str([(x + shift) % 0x110000 for x in str_to_unicodes(msg)])
 
 
 def decrypt(msg: str, shift: int) -> str:
-    # Implémenter le déchiffrement. Astuce: on peut implémenter le déchiffrement en
-    # appelant la fonction de chiffrement en modifiant légèrement le paramètre
-    pass
+    """Decrypt a message using the Caesar cipher."""
+    return encrypt(msg, -shift)
 
 
 def attack() -> tuple[str, int]:
@@ -28,5 +24,9 @@ def attack() -> tuple[str, int]:
     # Code a placer ici, il faut return un couple (msg, shift)
     # ou msg est le message déchiffré, et shift la clef de chiffrage correspondant
 
+    for shift in range(0x110000):
+        msg = decrypt(s, shift)
+        if "ennemis" in msg:
+            return (msg, shift)
     # Si on ne trouve pas on lance une exception:
     raise RuntimeError("Failed to attack")
